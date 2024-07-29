@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="FalconDatabase">
+      <HintPath>..\FalconDatabase\bin\Release\net8.0\FalconDatabase.dll</HintPath>
+    </Reference>
+    <Reference Include="LZSS">
+      <HintPath>..\LZSS\bin\Release\net8.0\LZSS.dll</HintPath>
+    </Reference>
+    <Reference Include="Utilities">
+      <HintPath>..\Utilities\bin\Release\net8.0\Utilities.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Utilities" />
+  </ItemGroup>
+
+</Project>
