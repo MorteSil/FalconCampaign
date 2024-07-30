@@ -208,7 +208,6 @@ namespace FalconCampaign.Units
         private Collection<Waypoint> egressWaypoints = [];
         private MissionRequest missionRequest = new();
 
-
         #endregion
 
         #region Helper Methods        

@@ -135,7 +135,7 @@ namespace FalconCampaign.Files
                     else if (embeddedFiles[index].FileName.Contains("TEA", StringComparison.CurrentCultureIgnoreCase))
                         teaFile = new TEA(GetEmbeddedFileContents(embeddedFiles[index].FileName, data), ver is null ? int.MaxValue : (int)ver);
                     else if (embeddedFiles[index].FileName.Contains("UNI", StringComparison.CurrentCultureIgnoreCase))
-                        ;//uniFile = new UNI(GetEmbeddedFileContents(embeddedFiles[index].FileName, data), ver is null ? int.MaxValue : (int)ver, database.Classes);
+                        uniFile = new UNI(GetEmbeddedFileContents(embeddedFiles[index].FileName, data), ver is null ? int.MaxValue : (int)ver, database.Classes);
                     else if (embeddedFiles[index].FileName.Contains("EVT", StringComparison.CurrentCultureIgnoreCase))
                         evtFile = new EVT(GetEmbeddedFileContents(embeddedFiles[index].FileName, data), ver is null ? int.MaxValue : (int)ver);
                     else if (embeddedFiles[index].FileName.Contains("PLT", StringComparison.CurrentCultureIgnoreCase))

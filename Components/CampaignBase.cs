@@ -57,6 +57,8 @@ namespace FalconCampaign.Components
         /// Object ID within the Campaign Engine.
         /// </summary>
         public short CampaignID { get => campId; set => campId = value; }
+        public bool IsEmitting { get => (baseFlags & 0x1) == 0x1; set => baseFlags = value ? (short)(baseFlags | 0x1) : (short)(baseFlags & 0x1); }
+        public bool IsJamming { get => (baseFlags & 0x4) == 0x4; set => baseFlags = value ? (short)(baseFlags | 0x4) : (short)(baseFlags & 0x4); }
         #endregion Properties
 
         #region Fields

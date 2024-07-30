@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Text;
 using Utilities.Logging;
 using FalconCampaign.Units;
+using System.Diagnostics;
 
 namespace FalconCampaign.Files
 {
@@ -71,18 +72,25 @@ namespace FalconCampaign.Files
                             {
                                 if (classTableEntry.ClassData.Type == (int)FalconDatabase.Enums.AirUnit.FLIGHT)
                                 {
+                                    Trace.WriteLine("Found Flight: ");
                                     thisUnit = new Flight(stream, version) { UnitType = thisUnitType };
+                                    Trace.WriteLine(thisUnit.ID.ID + " CampID: " + thisUnit.CampaignID + Environment.NewLine);
                                 }
                                 else if (classTableEntry.ClassData.Type == (int)FalconDatabase.Enums.AirUnit.SQUADRON)
                                 {
+                                    Trace.WriteLine("Found Squadron: ");
                                     thisUnit = new Squadron(stream, version) { UnitType = thisUnitType };
+                                    Trace.WriteLine(thisUnit.ID.ID + " CampID: " + thisUnit.CampaignID + Environment.NewLine);
                                 }
                                 else if (classTableEntry.ClassData.Type == (int)FalconDatabase.Enums.AirUnit.PACKAGE)
                                 {
+                                    Trace.WriteLine("Found Package: ");
                                     thisUnit = new Package(stream, version) { UnitType = thisUnitType };
+                                    Trace.WriteLine(thisUnit.ID.ID + " CampID: " + thisUnit.CampaignID + Environment.NewLine);
                                 }
                                 else
                                 {
+                                    Trace.WriteLine("Found Unknownn Air: ");
                                     thisUnit = null;
                                 }
                             }
@@ -90,14 +98,19 @@ namespace FalconCampaign.Files
                             {
                                 if (classTableEntry.ClassData.Type == (int)FalconDatabase.Enums.GroundUnit.BRIGADE)
                                 {
+                                    Trace.WriteLine("Found Brigade: ");
                                     thisUnit = new Brigade(stream, version) { UnitType = thisUnitType };
+                                    Trace.WriteLine(thisUnit.ID.ID + " CampID: " + thisUnit.CampaignID + Environment.NewLine);
                                 }
                                 else if (classTableEntry.ClassData.Type == (int)FalconDatabase.Enums.GroundUnit.BATTALION)
                                 {
+                                    Trace.WriteLine("Found Battalion: ");
                                     thisUnit = new Battalion(stream, version) { UnitType = thisUnitType };
+                                    Trace.WriteLine(thisUnit.ID.ID + " CampID: " + thisUnit.CampaignID + Environment.NewLine);
                                 }
                                 else
                                 {
+                                    Trace.WriteLine("Found Unknown Ground: ");
                                     thisUnit = null;
                                 }
 
@@ -106,10 +119,13 @@ namespace FalconCampaign.Files
                             {
                                 if (classTableEntry.ClassData.Type == (int)FalconDatabase.Enums.SeaUnit.TASKFORCE)
                                 {
+                                    Trace.WriteLine("Found Taskforce: ");
                                     thisUnit = new TaskForce(stream, version) { UnitType = thisUnitType };
+                                    Trace.WriteLine(thisUnit.ID.ID + " CampID: " + thisUnit.CampaignID + Environment.NewLine);
                                 }
                                 else
                                 {
+                                    Trace.WriteLine("Found Unknown Sea: ");
                                     thisUnit = null;
                                 }
                             }
@@ -117,15 +133,19 @@ namespace FalconCampaign.Files
                             {
                                 if (classTableEntry.ClassData.Type == (int)FalconDatabase.Enums.UnderseaUnit.WOLFPACK)
                                 {
+                                    Trace.WriteLine("Found Wolf[pack: ");
                                     thisUnit = new TaskForce(stream, version) { UnitType = thisUnitType };
+                                    Trace.WriteLine(thisUnit.ID.ID + " CampID: " + thisUnit.CampaignID + Environment.NewLine);
                                 }
                                 else
                                 {
+                                    Trace.WriteLine("Found Unknown Under Sea: ");
                                     thisUnit = null;
                                 }
                             }                            
                             else
                             {
+                                Trace.WriteLine("Found Unknown Unit: ");
                                 thisUnit = null;
                             }
                         }

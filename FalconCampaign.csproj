@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\repos\ReverseEngineering\ReverseEngineering.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="FalconDatabase">
       <HintPath>..\FalconDatabase\bin\Release\net8.0\FalconDatabase.dll</HintPath>
     </Reference>

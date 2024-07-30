@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Text;
 using FalconCampaign.Components;
 
@@ -81,11 +82,19 @@ namespace FalconCampaign.Units
         /// <summary>
         /// Squadron Patch ID.
         /// </summary>
-        public byte SquadronPatchID { get => squadronPatch; set => squadronPatch = value; }
+        public ushort SquadronPatchID { get => squadronPatch; set => squadronPatch = value; }
         /// <summary>
         /// Collection of Campaign Specific Ratings for the Squadron.
         /// </summary>
         public Collection<byte> CampaignRatings { get => campaignRatings; set => campaignRatings = value; }
+        /// <summary>
+        /// Time when the Unit will be retasked.
+        /// </summary>
+        public TimeSpan RetaskTime { get => new(0,0,0,0,(int)retaskTime); set => retaskTime = (uint)value.TotalMilliseconds; }
+        /// <summary>
+        /// The Default Skin to use.
+        /// </summary>
+        public uint DefaultSkin { get => defaultSkin; set => defaultSkin = value; }
         #endregion Properties
 
         #region Fields
@@ -107,7 +116,9 @@ namespace FalconCampaign.Units
         private short missionScore = 0;
         private byte totalLosses = 0;
         private byte pilotLosses = 0;
-        private byte squadronPatch = 0;
+        private ushort squadronPatch = 0;
+        private uint retaskTime = 0;
+        private uint defaultSkin = 0;
 
 
         #endregion Fields
@@ -169,7 +180,12 @@ namespace FalconCampaign.Units
             missionScore = reader.ReadInt16();
             totalLosses = reader.ReadByte();
             pilotLosses = reader.ReadByte();
-            squadronPatch = reader.ReadByte();
+            squadronPatch = reader.ReadUInt16();   // This changed from byte to ushort          
+            retaskTime = reader.ReadUInt32();
+            Trace.WriteLine(reader.ReadByte()); // Value always seems to be 0--Alignment byte?
+            defaultSkin = reader.ReadUInt32();  
+            
+            
         }
 
         internal new void Write(Stream stream)
@@ -216,6 +232,9 @@ namespace FalconCampaign.Units
             writer.Write(totalLosses);
             writer.Write(pilotLosses);
             writer.Write(squadronPatch);
+            writer.Write(retaskTime);
+            writer.Write((byte)0); // Alignment?
+            writer.Write(defaultSkin);
         }
         #endregion Helper Methods
 

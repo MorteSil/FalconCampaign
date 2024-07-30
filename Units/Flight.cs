@@ -1,5 +1,6 @@
 ﻿using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Reflection.PortableExecutable;
 using System.Text;
 using FalconCampaign.Components;
 
@@ -127,6 +128,18 @@ namespace FalconCampaign.Units
         /// Amount of Fuel the Flight requires from a Tanker during the Flight.
         /// </summary>
         public uint RefuelQuantity { get => refuelQuantity; set => refuelQuantity = value; }
+        /// <summary>
+        /// Default skins for each aircraft in the Flight.
+        /// </summary>
+        public Collection<uint> DefaultSkins { get => defaultSkins; set => defaultSkins = value; }
+        /// <summary>
+        /// Landing Location X. Stationary for Land-Base Flights, follows a Carrier for Carrier Based Units.
+        /// </summary>
+        public short HomePlateX { get => homePlateX; set => homePlateX = value; }
+        /// <summary>
+        /// Landing Location Y. Stationary for Land-Base Flights, follows a Carrier for Carrier Based Units.
+        /// </summary>
+        public short HomePlateY { get => homePlateY; set => homePlateY = value; }
         #endregion Properties
 
         #region Fields
@@ -162,31 +175,47 @@ namespace FalconCampaign.Units
         private byte callsignNumber = 0;
         private uint refuelQuantity = 0;
         private float zPos = 0;
-
+        private Collection<uint> defaultSkins = [];
+        private Collection<uint> startingFuel = [];
+        private short homePlateX = 0;
+        private short homePlateY = 0;
+        private ushort homePlateID = 0;
 
         #endregion Fields
 
         #region Helper Methods
         internal new void Read(Stream stream)
         {
+            
             using var reader = new BinaryReader(stream, Encoding.Default, leaveOpen: true);
-            // TODO: What is this? -- Might be 134, found missing for loop of 16 bytes
-            reader.ReadBytes(150);
+            Trace.WriteLine("Unknown: " + reader.ReadByte());
+            HomePlateX = reader.ReadInt16();
+            HomePlateY = reader.ReadInt16();
 
-            zPos = reader.ReadSingle(); // 150
-            fuel_burnt = reader.ReadInt32(); // 154                    
-            lastMove = reader.ReadUInt32(); // 158
-            lastCombat = reader.ReadUInt32(); // 162
-            timeOnTarget = reader.ReadUInt32();  //166
-            missionEndTime = reader.ReadUInt32();   // 170                 
-            missionTarget = reader.ReadInt16(); // 174
-                                                //TODO: Debugging-remove this.
-            Trace.WriteLine(LastMove.ToString("g"));
-            Trace.WriteLine(LastCombat.ToString("g"));
-            Trace.WriteLine(TimeOnTarget.ToString("g"));
-            Trace.WriteLine(MissionEndTime.ToString("g"));
+            Trace.Write(ReverseEngineering.ReverseEngineering.CheckAll(stream, false, 13));
 
-            loadouts = reader.ReadByte(); // 176
+            homePlateID = reader.ReadUInt16();
+
+            Trace.Write(ReverseEngineering.ReverseEngineering.CheckAll(stream, false, 114));
+            
+            Trace.Write(Environment.NewLine);
+            for (int j =0;j<4;j++)
+            {
+                Trace.WriteLine("Starting? Internal Fuel " + j);
+                Trace.WriteLine(reader.ReadUInt32());
+                
+            }
+            Trace.WriteLine(Environment.NewLine);
+
+            zPos = reader.ReadSingle();
+            fuel_burnt = reader.ReadInt32();                   
+            lastMove = reader.ReadUInt32();
+            lastCombat = reader.ReadUInt32();
+            timeOnTarget = reader.ReadUInt32();
+            missionEndTime = reader.ReadUInt32();                
+            missionTarget = reader.ReadInt16();
+
+            loadouts = reader.ReadByte();
             loadout = [];
             for (int j = 0; j < loadouts; j++)
             {
@@ -196,55 +225,61 @@ namespace FalconCampaign.Units
                     WeaponCount = [],
                 };
                 for (int k = 0; k < 16; k++)
-                    thisLoadout.WeaponID.Add(reader.ReadUInt16()); // 177
+                    thisLoadout.WeaponID.Add(reader.ReadUInt16());
                 thisLoadout.WeaponCount = [];
                 for (int k = 0; k < 16; k++)
-                    thisLoadout.WeaponCount.Add(reader.ReadByte()); // 209
+                    thisLoadout.WeaponCount.Add(reader.ReadByte());
 
                 loadout.Add(thisLoadout);
             }
-            mission = reader.ReadByte(); // 225
-            oldMission = reader.ReadByte(); // 226               
-            lastDirection = reader.ReadByte();  // 227
-            priority = reader.ReadByte();  // 228
-            missionID = reader.ReadByte();  // 229               
-            evalFlags = reader.ReadByte(); // 230
-            mission_context = reader.ReadByte(); // 231    
-            package = new() // 232
+            mission = reader.ReadByte();
+            oldMission = reader.ReadByte();             
+            lastDirection = reader.ReadByte();
+            priority = reader.ReadByte();
+            missionID = reader.ReadByte();          
+            evalFlags = reader.ReadByte();
+            mission_context = reader.ReadByte();  
+            package = new()
             {
                 ID = reader.ReadUInt32(),
                 Creator = reader.ReadUInt32()
             };
-            squadron = new() // 240
+            squadron = new()
             {
                 ID = reader.ReadUInt32(),
                 Creator = reader.ReadUInt32()
             };
-            requester = new() // 248
+            requester = new()
             {
                 ID = reader.ReadUInt32(),
                 Creator = reader.ReadUInt32()
             };
             slots = [];
             for (int j = 0; j < 4; j++)
-                slots.Add(reader.ReadByte()); // 256
+                slots.Add(reader.ReadByte());
             pilots = [];
             for (int j = 0; j < 4; j++)
-                pilots.Add(reader.ReadByte()); // 260
+                pilots.Add(reader.ReadByte());
             planeStats = [];
             for (int j = 0; j < 4; j++)
-                planeStats.Add(reader.ReadByte()); // 264
+                planeStats.Add(reader.ReadByte());
             playerSlots = [];
             for (int j = 0; j < 4; j++)
-                playerSlots.Add(reader.ReadByte());  // 268
-            lastPlayerSlot = reader.ReadByte(); // 272
+                playerSlots.Add(reader.ReadByte());
+            lastPlayerSlot = reader.ReadByte();
             callsignID = reader.ReadByte();
-            callsignNumber = reader.ReadByte();  // 274
-            refuelQuantity = reader.ReadUInt32(); // 275
+            callsignNumber = reader.ReadByte();
+            refuelQuantity = reader.ReadUInt32();
+            
+            for (int j = 0;j < 4; j++)
+            {                
+                defaultSkins.Add(reader.ReadUInt32());                
+            }            
+            // 8 Missing Bytes
+            Trace.WriteLine("Unknown: " + reader.ReadUInt32());
+            Trace.WriteLine("Unknown: " + reader.ReadUInt32());
 
-            //Total 279
-            // Buffer to align on int32 boundary?
-            reader.ReadByte();
+
         }
 
         internal new void Write(Stream stream)
@@ -295,8 +330,12 @@ namespace FalconCampaign.Units
             writer.Write(callsignID);
             writer.Write(callsignNumber);
             writer.Write(refuelQuantity);
-            //buffer?
-            writer.Write((byte)0);
+            for (int j = 0; j < 4; j++)
+            {
+                writer.Write(defaultSkins[j]);
+            }
+            writer.Write((uint)0); // Unknown
+            writer.Write((uint)0); // Unknown
         }
         #endregion Helper Methods
 
